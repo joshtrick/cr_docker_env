@@ -163,9 +163,9 @@ RUN cd ~/tmp/ \
     && rm -rf ~/tmp/*
 
 USER root
-RUN python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip \
-    && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir "setuptools==42.0.2" \
-    && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir \
+RUN python3 -m pip install --upgrade pip \
+    && python3 -m pip install --no-cache-dir "setuptools==42.0.2" \
+    && python3 -m pip install --no-cache-dir \
     "numpy==1.16.4" \
     "matplotlib==3.1.2" \
     "opencv-python==4.1.2.30" \
