@@ -189,6 +189,7 @@ RUN python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade
     "flask==1.1.1" \
     "flask-classful==0.14.2" \
     "graphviz==0.13.2" \
+    "SgGo==0.5.3" \
     "tensorflow==1.14.0"
 
 USER ${USER_NAME}
