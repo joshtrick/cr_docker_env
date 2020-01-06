@@ -192,6 +192,14 @@ RUN python3 -m pip install --upgrade pip \
     "SgGo==0.5.3" \
     "tensorflow==1.14.0"
 
+RUN apt-get update \
+    && apt-get install dirmngr
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+           /tmp/* \
+           /var/tmp/* \
+           /usr/share/doc/*
+
 RUN echo "deb http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
     && echo "deb-src http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-key 612DEFB798507F25 \
