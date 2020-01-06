@@ -37,12 +37,9 @@ RUN apt-get update -y \
     ctags \
     openssh-server \
     graphviz \
-    xauth \
     python3 \
     python3-dev \
     python3-pip \
-    python3-graph-tool \
-    libcairo2-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
            /tmp/* \
@@ -196,10 +193,9 @@ RUN python3 -m pip install --upgrade pip \
     "tensorflow-gpu==1.14.0"
 
 RUN echo "deb http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
-    && echo "deb-src http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list
-
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 612DEFB798507F25 \
-    && apt update \
+    && echo "deb-src http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-key 612DEFB798507F25 \
+    && apt-get update \
     && apt-get install -y --no-install-recommends xauth python3-graph-tool libcairo2-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
