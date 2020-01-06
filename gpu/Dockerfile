@@ -192,6 +192,17 @@ RUN python3 -m pip install --upgrade pip \
     "SgGo==0.5.3" \
     "tensorflow-gpu==1.14.0"
 
+RUN echo "deb http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
+    && echo "deb-src http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-key 612DEFB798507F25 \
+    && apt update \
+    && apt-get install -y --no-install-recommends xauth python3-graph-tool libcairo2-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+           /tmp/* \
+           /var/tmp/* \
+           /usr/share/doc/*
+
 USER ${USER_NAME}
 RUN cd ~/tmp/ \
     && git clone https://github.com/exvim/main \
