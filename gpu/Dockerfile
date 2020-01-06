@@ -37,9 +37,12 @@ RUN apt-get update -y \
     ctags \
     openssh-server \
     graphviz \
+    xauth \
     python3 \
     python3-dev \
     python3-pip \
+    python3-graph-tool \
+    libcairo2-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
            /tmp/* \
