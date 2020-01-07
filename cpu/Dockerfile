@@ -193,7 +193,7 @@ RUN python3 -m pip install --upgrade pip \
     "tensorflow==1.14.0"
 
 RUN apt-get update \
-    && apt-get install dirmngr \
+    && apt-get install -y --no-install-recommends dirmngr \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
            /tmp/* \
