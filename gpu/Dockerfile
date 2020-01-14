@@ -1,12 +1,25 @@
+#FROM ubuntu:18.04
+#ARG TENSORFLOW_TYPE=tensorflow
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
+ARG TENSORFLOW_TYPE=tensorflow-gpu
+
+# ********SWITCH BETWEEN CPU AND GPU ABOVE********
+
 MAINTAINER hao jiang (hao.jiang@corerain.com)
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS yes
 ENV TERM xterm-256color
 ARG USER_NAME=corerain
 
+# Change download sources
 RUN cp /etc/apt/sources.list /etc/apt/sources.list.bk \
     && sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN mkdir -p /root/.pip/ \
+    && echo "[global]" >> /root/.pip/pip.conf \
+    && echo "index-url = http://mirrors.aliyun.com/pypi/simple" >> /root/.pip/pip.conf \
+    && echo "extra-index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf \
+    && echo "extra-index-url = http://pypi.mirrors.ustc.edu.cn/simple" >> /root/.pip/pip.conf \
+    && echo "extra-index-url = https://pypi.python.org/pypi" >> /root/.pip/pip.conf
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
@@ -36,10 +49,28 @@ RUN apt-get update -y \
     gawk \
     ctags \
     openssh-server \
+    gnupg2 \
+    ca-certificates \
+    dirmngr \
+    gpg-agent \
     graphviz \
     python3 \
     python3-dev \
     python3-pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+           /tmp/* \
+           /var/tmp/* \
+           /usr/share/doc/*
+
+RUN echo "deb http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
+    && echo "deb-src http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-key 612DEFB798507F25 \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    xauth \
+    python3-graph-tool \
+    libcairo2-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
            /tmp/* \
@@ -51,10 +82,6 @@ RUN useradd -ms /bin/bash ${USER_NAME} \
     && adduser ${USER_NAME} sudo
 USER ${USER_NAME}
 RUN mkdir -p ~/tmp/
-RUN mkdir -p ~/.pip/ \
-    && echo "[global]" >> /home/${USER_NAME}/.pip/pip.conf \
-    && echo "index-url = https://pypi.tuna.tsinghua.edu.cn/simple" \
-            >> /home/${USER_NAME}/.pip/pip.conf
 
 # Install cmake
 RUN cd ~/tmp/ \
@@ -74,8 +101,17 @@ RUN cd ~/tmp/ \
     && cd opencv-3.4 \
     && mkdir -p build \
     && cd build \
-    && cmake .. -DCMAKE_BUILD_TYPE=release \
+    && cmake .. \
+    -DCMAKE_BUILD_TYPE=release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
+    -DBUILD_PROTOBUF=OFF \
+    -DBUILD_opencv_dnn=OFF \
+    -DWITH_CUBLAS=OFF \
+    -DWITH_CUDA=OFF \
+    -DWITH_CUFFT=OFF \
+    -DWITH_OPENCL=OFF \
+    -DWITH_OPENCLAMDBLAS=OFF \
+    -DWITH_OPENCLAMDFFT=OFF \
     && make -j2 \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
@@ -104,7 +140,8 @@ RUN cd ~/tmp/ \
     && cd googletest-release-1.8.0 \
     && mkdir -p build \
     && cd build \
-    && cmake .. -G"Unix Makefiles" \
+    && cmake .. \
+    -G"Unix Makefiles" \
     -DCMAKE_BUILD_TYPE=release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
     -DBUILD_SHARED_LIBS=true \
@@ -113,7 +150,6 @@ RUN cd ~/tmp/ \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
     && rm -rf ~/tmp/*
-
 
 # Install gflags
 RUN cd ~/tmp/ \
@@ -124,7 +160,8 @@ RUN cd ~/tmp/ \
     && cd gflags-2.2.2 \
     && mkdir -p build \
     && cd build \
-    && cmake .. -DCMAKE_BUILD_TYPE=release \
+    && cmake .. \
+    -DCMAKE_BUILD_TYPE=release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
     -DBUILD_SHARED_LIBS=true \
     -DBUILD_STATIC_LIBS=true \
@@ -142,7 +179,8 @@ RUN cd ~/tmp/ \
     && cd eigen-eigen-b3f3d4950030 \
     && mkdir -p build \
     && cd build \
-    && cmake .. -DCMAKE_BUILD_TYPE=release \
+    && cmake .. \
+    -DCMAKE_BUILD_TYPE=release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
     && make -j2 \
     && echo admin | sudo -S make install \
@@ -160,6 +198,17 @@ RUN cd ~/tmp/ \
     && make -j2 \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
+    && rm -rf ~/tmp/*
+
+# Install exvim
+RUN cd ~/tmp/ \
+    && git clone https://github.com/exvim/main \
+    && cd main \
+    && sh unix/install.sh \
+    && sh unix/replace-my-vim.sh \
+    && sed -i "45s/.*/        silent exec 'language C.UTF-8'/" ~/.vimrc \
+    && sed -i "50s/call/\" call/" ~/.vimrc.plugins \
+    && sed -i "51s/call/\" call/" ~/.vimrc.plugins \
     && rm -rf ~/tmp/*
 
 USER root
@@ -190,31 +239,9 @@ RUN python3 -m pip install --upgrade pip \
     "flask-classful==0.14.2" \
     "graphviz==0.13.2" \
     "SgGo==0.5.3" \
-    "tensorflow-gpu==1.14.0"
-
-RUN echo "deb http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
-    && echo "deb-src http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-key 612DEFB798507F25 \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends xauth python3-graph-tool libcairo2-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-           /tmp/* \
-           /var/tmp/* \
-           /usr/share/doc/*
+    "$TENSORFLOW_TYPE==1.14.0"
 
 USER ${USER_NAME}
-RUN cd ~/tmp/ \
-    && git clone https://github.com/exvim/main \
-    && cd main \
-    && sh unix/install.sh \
-    && sh unix/replace-my-vim.sh \
-    && sed -i "45s/.*/        silent exec 'language C.UTF-8'/" ~/.vimrc \
-    && rm -rf ~/tmp/*
-
-RUN sed -i "50s/call/\" call/" ~/.vimrc.plugins \
-    && sed -i "51s/call/\" call/" ~/.vimrc.plugins
-
 RUN PYTHON_V=$(python3 -c 'import sys; print(str(sys.version_info[0])+"."+ \
                                              str(sys.version_info[1]))') \
     && echo "export LC_ALL=C.UTF-8" >> ~/.bashrc \
