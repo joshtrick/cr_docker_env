@@ -10,43 +10,46 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS yes
 ENV TERM xterm-256color
 ARG USER_NAME=corerain
+ARG MAKE_THREADS=4
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
-    sudo \
-    virtualenv \
+    autoconf \
+    automake \
+    build-essential \
+    curl \
+    ctags \
+    ca-certificates \
+    dirmngr \
+    gnupg2 \
+    gpg-agent \
+    graphviz \
+    gawk \
+    git \
+    id-utils \
     libssl-dev \
     libpq-dev \
-    git \
-    build-essential \
-    vim \
-    zip \
-    unzip \
     libtool \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
     libxrender1 \
-    autoconf \
-    automake \
     libgtk2.0-dev \
-    pkg-config\
-    curl \
-    wget \
+    libcairo2-dev \
     net-tools \
-    software-properties-common \
-    id-utils \
-    gawk \
-    ctags \
     openssh-server \
-    gnupg2 \
-    ca-certificates \
-    dirmngr \
-    gpg-agent \
-    graphviz \
+    pkg-config\
     python3 \
     python3-dev \
     python3-pip \
+    sudo \
+    software-properties-common \
+    unzip \
+    virtualenv \
+    vim \
+    wget \
+    xauth \
+    zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
            /tmp/* \
@@ -58,9 +61,7 @@ RUN echo "deb http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-key 612DEFB798507F25 \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-    xauth \
     python3-graph-tool \
-    libcairo2-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
            /tmp/* \
@@ -102,7 +103,7 @@ RUN cd ~/tmp/ \
     -DWITH_OPENCL=OFF \
     -DWITH_OPENCLAMDBLAS=OFF \
     -DWITH_OPENCLAMDFFT=OFF \
-    && make -j2 \
+    && make -j$MAKE_THREADS \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
     && rm -rf ~/tmp/*
@@ -116,7 +117,7 @@ RUN cd ~/tmp/ \
     && cd protobuf-3.5.1.1 \
     && ./autogen.sh \
     && ./configure \
-    && make -j2 \
+    && make -j$MAKE_THREADS \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
     && rm -rf ~/tmp/*
@@ -136,7 +137,7 @@ RUN cd ~/tmp/ \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
     -DBUILD_SHARED_LIBS=true \
     -DBUILD_STATIC_LIBS=true \
-    && make -j2 \
+    && make -j$MAKE_THREADS \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
     && rm -rf ~/tmp/*
@@ -155,7 +156,7 @@ RUN cd ~/tmp/ \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
     -DBUILD_SHARED_LIBS=true \
     -DBUILD_STATIC_LIBS=true \
-    && make -j2 \
+    && make -j$MAKE_THREADS \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
     && rm -rf ~/tmp/*
@@ -172,7 +173,7 @@ RUN cd ~/tmp/ \
     && cmake .. \
     -DCMAKE_BUILD_TYPE=release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
-    && make -j2 \
+    && make -j$MAKE_THREADS \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
     && rm -rf ~/tmp/*
@@ -185,7 +186,7 @@ RUN cd ~/tmp/ \
     && unzip glog-0.3.4.zip \
     && cd glog-0.3.4 \
     && ./configure \
-    && make -j2 \
+    && make -j$MAKE_THREADS \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
     && rm -rf ~/tmp/*
@@ -202,6 +203,10 @@ RUN cd ~/tmp/ \
     && rm -rf ~/tmp/*
 
 USER root
+RUN echo "[global]" > /root/.pip/pip.conf \
+    && echo "index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf \
+    && echo "extra-index-url = https://pypi.python.org/pypi" >> /root/.pip/pip.conf
+RUN cat /root/.pip/pip.conf
 RUN python3 -m pip install --upgrade pip \
     && python3 -m pip install --no-cache-dir "setuptools==42.0.2" \
     && python3 -m pip install --no-cache-dir \
@@ -229,16 +234,14 @@ RUN python3 -m pip install --upgrade pip \
     "flask-classful==0.14.2" \
     "graphviz==0.13.2" \
     "SgGo==0.5.3" \
-    "$TENSORFLOW_TYPE==1.14.0"
+    $TENSORFLOW_TYPE"==1.14.0"
 
 # Change download sources
 RUN cp /etc/apt/sources.list /etc/apt/sources.list.bk \
     && sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
 RUN mkdir -p /root/.pip/ \
     && echo "[global]" >> /root/.pip/pip.conf \
-    && echo "index-url = http://mirrors.aliyun.com/pypi/simple" >> /root/.pip/pip.conf \
-    && echo "extra-index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf \
-    && echo "extra-index-url = http://pypi.mirrors.ustc.edu.cn/simple" >> /root/.pip/pip.conf \
+    && echo "index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf \
     && echo "extra-index-url = https://pypi.python.org/pypi" >> /root/.pip/pip.conf
 
 USER ${USER_NAME}
