@@ -11,16 +11,6 @@ ENV DEBCONF_NOWARNINGS yes
 ENV TERM xterm-256color
 ARG USER_NAME=corerain
 
-# Change download sources
-RUN cp /etc/apt/sources.list /etc/apt/sources.list.bk \
-    && sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
-RUN mkdir -p /root/.pip/ \
-    && echo "[global]" >> /root/.pip/pip.conf \
-    && echo "index-url = http://mirrors.aliyun.com/pypi/simple" >> /root/.pip/pip.conf \
-    && echo "extra-index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf \
-    && echo "extra-index-url = http://pypi.mirrors.ustc.edu.cn/simple" >> /root/.pip/pip.conf \
-    && echo "extra-index-url = https://pypi.python.org/pypi" >> /root/.pip/pip.conf
-
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
     sudo \
@@ -240,6 +230,16 @@ RUN python3 -m pip install --upgrade pip \
     "graphviz==0.13.2" \
     "SgGo==0.5.3" \
     "$TENSORFLOW_TYPE==1.14.0"
+
+# Change download sources
+RUN cp /etc/apt/sources.list /etc/apt/sources.list.bk \
+    && sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN mkdir -p /root/.pip/ \
+    && echo "[global]" >> /root/.pip/pip.conf \
+    && echo "index-url = http://mirrors.aliyun.com/pypi/simple" >> /root/.pip/pip.conf \
+    && echo "extra-index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf \
+    && echo "extra-index-url = http://pypi.mirrors.ustc.edu.cn/simple" >> /root/.pip/pip.conf \
+    && echo "extra-index-url = https://pypi.python.org/pypi" >> /root/.pip/pip.conf
 
 USER ${USER_NAME}
 RUN PYTHON_V=$(python3 -c 'import sys; print(str(sys.version_info[0])+"."+ \
