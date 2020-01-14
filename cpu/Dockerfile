@@ -203,10 +203,6 @@ RUN cd ~/tmp/ \
     && rm -rf ~/tmp/*
 
 USER root
-RUN echo "[global]" > /root/.pip/pip.conf \
-    && echo "index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf \
-    && echo "extra-index-url = https://pypi.python.org/pypi" >> /root/.pip/pip.conf
-RUN cat /root/.pip/pip.conf
 RUN python3 -m pip install --upgrade pip \
     && python3 -m pip install --no-cache-dir "setuptools==42.0.2" \
     && python3 -m pip install --no-cache-dir \
