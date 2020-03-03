@@ -21,6 +21,7 @@ RUN apt-get update -y \
     ctags \
     ca-certificates \
     dirmngr \
+    freeglut3-dev \
     gnupg2 \
     gpg-agent \
     graphviz \
@@ -36,6 +37,10 @@ RUN apt-get update -y \
     libxrender1 \
     libgtk2.0-dev \
     libcairo2-dev \
+    libmtdev-dev \
+    libxkbcommon-x11-0 \
+    libglu1-mesa-dev \
+    mesa-common-dev \
     net-tools \
     openssh-server \
     pkg-config\
@@ -49,6 +54,7 @@ RUN apt-get update -y \
     vim \
     wget \
     xauth \
+    xclip \
     zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
@@ -230,6 +236,9 @@ RUN python3 -m pip install --upgrade pip \
     "flask-classful==0.14.2" \
     "graphviz==0.13.2" \
     "SgGo==0.5.3" \
+    "kivy==1.11.1" \
+    "pycrypto==2.6.1" \
+    "psutil==5.7.0" \
     $TENSORFLOW_TYPE"==1.14.0"
 
 # Change download sources
