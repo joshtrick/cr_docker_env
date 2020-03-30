@@ -20,7 +20,6 @@ RUN apt-get update -y \
     curl \
     ctags \
     ca-certificates \
-    caffe-cpu \
     dirmngr \
     freeglut3-dev \
     gnupg2 \
@@ -41,6 +40,12 @@ RUN apt-get update -y \
     libmtdev-dev \
     libxkbcommon-x11-0 \
     libglu1-mesa-dev \
+    libatlas-base-dev \
+    libboost-all-dev \
+    libhdf5-serial-dev \
+    libleveldb-dev \
+    liblmdb-dev \
+    libsnappy-dev \
     mesa-common-dev \
     net-tools \
     openssh-server \
@@ -88,6 +93,7 @@ RUN cd ~/tmp/ \
     && echo admin | sudo -S mv cmake-3.14.7-Linux-x86_64 /opt/cmake-3.14.7 \
     && echo admin | sudo -S ln -sf /opt/cmake-3.14.7/bin/* /usr/bin/ \
     && rm -rf ~/tmp/*
+
 
 # Install OpenCV for C and C++
 RUN cd ~/tmp/ \
@@ -240,6 +246,13 @@ RUN python3 -m pip install --upgrade pip \
     "pycryptodome==3.9.7" \
     "psutil==5.7.0" \
     "pyinstaller==3.6" \
+    "scikit-image>=0.9.3" \
+    "ipython>=3.0.0" \
+    "leveldb>=0.191" \
+    "nose>=1.3.0" \
+    "python-dateutil>=1.4,<2" \
+    "python-gflags>=2.0" \
+    "pyyaml>=3.10" \
     $TENSORFLOW_TYPE"==1.14.0"
 
 # Change download sources
@@ -251,6 +264,17 @@ RUN mkdir -p /root/.pip/ \
     && echo "extra-index-url = https://pypi.python.org/pypi" >> /root/.pip/pip.conf
 
 USER ${USER_NAME}
+
+# Install Caffe
+RUN cd ~/tmp/ \
+    && git clone -b 1.0 --depth 1 https://github.com/BVLC/caffe.git . \
+    && mkdir build && cd build \
+    cmake -DCPU_ONLY=1 .. \
+    && make -j$MAKE_THREADS \
+    && echo admin | sudo -S make install \
+    && echo admin | sudo -S ldconfig \
+    && rm -rf ~/tmp/*
+
 RUN PYTHON_V=$(python3 -c 'import sys; print(str(sys.version_info[0])+"."+ \
                                              str(sys.version_info[1]))') \
     && echo "export LC_ALL=C.UTF-8" >> ~/.bashrc \
