@@ -63,8 +63,7 @@ RUN apt-get update -y \
            /var/tmp/* \
            /usr/share/doc/*
 
-RUN echo "deb http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
-    && echo "deb-src http://downloads.skewed.de/apt/bionic bionic universe" >> /etc/apt/sources.list \
+RUN echo "deb http://downloads.skewed.de/apt bionic main" >> /etc/apt/sources.list \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-key 612DEFB798507F25 \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
