@@ -20,6 +20,7 @@ RUN apt-get update -y \
     curl \
     ctags \
     ca-certificates \
+    caffe-cpu \
     dirmngr \
     freeglut3-dev \
     gnupg2 \
@@ -237,8 +238,9 @@ RUN python3 -m pip install --upgrade pip \
     "graphviz==0.13.2" \
     "SgGo==0.5.3" \
     "kivy==1.11.1" \
-    "pycrypto==2.6.1" \
+    "pycryptodome==3.9.7" \
     "psutil==5.7.0" \
+    "pyinstaller==3.6" \
     $TENSORFLOW_TYPE"==1.14.0"
 
 # Change download sources
