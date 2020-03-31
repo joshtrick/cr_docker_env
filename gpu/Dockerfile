@@ -245,13 +245,6 @@ RUN python3 -m pip install --upgrade pip \
     "pycryptodome==3.9.7" \
     "psutil==5.7.0" \
     "pyinstaller==3.6" \
-    "scikit-image>=0.9.3" \
-    "ipython>=3.0.0" \
-    "leveldb>=0.191" \
-    "nose>=1.3.0" \
-    "python-dateutil>=1.4,<2" \
-    "python-gflags>=2.0" \
-    "pyyaml>=3.10" \
     $TENSORFLOW_TYPE"==1.14.0"
 
 # Change download sources
@@ -272,7 +265,7 @@ RUN cd ~/tmp/ \
     && cmake .. \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
     -DCPU_ONLY=1 \
-    || true \
+    -DBUILD_python=0 \
     && make -j$MAKE_THREADS \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
