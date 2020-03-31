@@ -268,7 +268,7 @@ USER ${USER_NAME}
 # Install Caffe
 RUN cd ~/tmp/ \
     && git clone -b 1.0 --depth 1 https://github.com/BVLC/caffe.git . \
-    && mkdir0 -p build \
+    && mkdir -p build \
     && cd build \
     && cmake -DCPU_ONLY=1 .. \
     && make -j$MAKE_THREADS \
