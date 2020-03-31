@@ -259,17 +259,20 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.bk \
     && sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
 RUN mkdir -p /root/.pip/ \
     && echo "[global]" >> /root/.pip/pip.conf \
-    && echo "index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf \
-    && echo "extra-index-url = https://pypi.python.org/pypi" >> /root/.pip/pip.conf
+    && echo "index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf
 
 USER ${USER_NAME}
 
 # Install Caffe
 RUN cd ~/tmp/ \
-    && git clone -b 1.0 --depth 1 https://github.com/BVLC/caffe.git . \
+    && git clone -b 1.0 --depth 1 https://github.com/BVLC/caffe.git \
+    && cd caffe \
     && mkdir -p build \
     && cd build \
-    && cmake -DCPU_ONLY=1 .. \
+    && cmake .. \
+    -DCMAKE_INSTALL_PREFIX=/usr/local/ \
+    -DCPU_ONLY=1 \
+    || true \
     && make -j$MAKE_THREADS \
     && echo admin | sudo -S make install \
     && echo admin | sudo -S ldconfig \
