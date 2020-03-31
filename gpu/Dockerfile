@@ -263,7 +263,7 @@ RUN cd ~/tmp/ \
     && mkdir -p build \
     && cd build \
     && cmake .. \
-    -DCMAKE_INSTALL_PREFIX=/usr/local/ \
+    -DCMAKE_INSTALL_PREFIX=/usr/ \
     -DCPU_ONLY=1 \
     -DBUILD_python=0 \
     && make -j$MAKE_THREADS \
@@ -276,6 +276,8 @@ RUN PYTHON_V=$(python3 -c 'import sys; print(str(sys.version_info[0])+"."+ \
     && echo "export LC_ALL=C.UTF-8" >> ~/.bashrc \
     && echo "export LANG=C.UTF-8" >> ~/.bashrc \
     && echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python${PYTHON_V}/dist-packages/" >> ~/.bashrc \
+    && echo admin | sudo -S rm /usr/bin/python || true \
+    && echo admin | sudo -S rm /usr/bin/pip || true \
     && echo admin | sudo -S ln -s /usr/bin/python3 /usr/bin/python \
     && echo admin | sudo -S ln -s /usr/bin/pip3 /usr/bin/pip
 
