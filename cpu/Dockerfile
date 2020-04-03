@@ -35,7 +35,7 @@ RUN apt-get update -y \
     libsm6 \
     libxext6 \
     libxrender1 \
-    libgtk2.0-dev \
+    libgtk-3-dev \
     libcairo2-dev \
     libmtdev-dev \
     libxkbcommon-x11-0 \
