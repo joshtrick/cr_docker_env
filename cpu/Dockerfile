@@ -273,9 +273,12 @@ RUN cd ~/tmp/ \
 
 RUN PYTHON_V=$(python3 -c 'import sys; print(str(sys.version_info[0])+"."+ \
                                              str(sys.version_info[1]))') \
-    && echo admin | sudo -S /bin/su -c "echo 'export LC_ALL=C.UTF-8' >> /etc/profile" \
-    && echo admin | sudo -S /bin/su -c "echo 'export LANG=C.UTF-8' >> /etc/profile" \
-    && echo admin | sudo -S /bin/su -c "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python${PYTHON_V}/dist-packages/' >> /etc/profile" \
+    && echo "export LC_ALL=C.UTF-8" >> ~/.bashrc \
+    && echo "export LANG=C.UTF-8" >> ~/.bashrc \
+    && echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python${PYTHON_V}/dist-packages/" >> ~/.bashrc \
+    && echo admin | sudo -S /bin/su -c "echo 'export LC_ALL=C.UTF-8' >> /root/.bashrc" \
+    && echo admin | sudo -S /bin/su -c "echo 'export LANG=C.UTF-8' >> /root/.bashrc" \
+    && echo admin | sudo -S /bin/su -c "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python${PYTHON_V}/dist-packages/' >> /root/.bashrc" \
     && echo admin | sudo -S rm /usr/bin/python || true \
     && echo admin | sudo -S rm /usr/bin/pip || true \
     && echo admin | sudo -S ln -s /usr/bin/python3 /usr/bin/python \
