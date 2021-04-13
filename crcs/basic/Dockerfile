@@ -57,7 +57,7 @@ RUN apt-get update -y \
     libv4l-dev \
     libasound2-dev \
     libx264-dev \
-    libx265-dev
+    libx265-dev \
     mesa-common-dev \
     mercurial \
     net-tools \
@@ -156,7 +156,7 @@ RUN cd /workspace/tmp/ \
     --enable-vaapi \
     && make -j$MAKE_THREADS \
     && make install \
-    && ldconfig
+    && ldconfig \
     && rm -rf /workspace/tmp/*
 
 # Install OpenCV for C and C++
