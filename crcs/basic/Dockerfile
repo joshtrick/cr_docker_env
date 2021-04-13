@@ -39,8 +39,29 @@ RUN apt-get update -y \
     libleveldb-dev \
     liblmdb-dev \
     libsnappy-dev \
+    libass-dev \
+    libva-dev \
+    libdrm-dev \
+    libvorbis-dev \
+    libogg-dev \
+    libx11-dev \
+    libperl-dev \
+    libpciaccess-dev \
+    libpciaccess0 \
+    libfreetype6-dev \
+    libsdl2-dev \
+    libvdpau-dev \
+    libxcb1-dev \
+    libxcb-shm0-dev \
+    libxcb-xfixes0-dev \
+    libv4l-dev \
+    libasound2-dev \
+    libx264-dev \
+    libx265-dev
     mesa-common-dev \
+    mercurial \
     net-tools \
+    nasm \
     openssh-server \
     pkg-config\
     python3 \
@@ -48,18 +69,24 @@ RUN apt-get update -y \
     python3-pip \
     sudo \
     software-properties-common \
+    texinfo \
     unzip \
     virtualenv \
     vim \
     wget \
     xauth \
     xclip \
+    xorg-dev \
+    yasm \
+    zlib1g-dev \
     zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
            /tmp/* \
            /var/tmp/* \
            /usr/share/doc/*
+
+
 
 RUN mkdir -p /workspace/tmp
 
@@ -72,21 +99,81 @@ RUN cd /workspace/tmp/ \
     && ln -sf /opt/cmake-3.14.7/bin/* /usr/bin/ \
     && rm -rf /workspace/tmp/*
 
+# Install libva
+RUN cd /workspace/tmp/ \
+    && wget -O libva-2.4-branch.zip \
+    https://codeload.github.com/intel/libva/zip/refs/heads/v2.4-branch \
+    && ls \
+    && unzip libva-2.4-branch.zip \
+    && cd libva-2.4-branch \
+    && ./autogen.sh \
+    && ./configure \
+    && make -j$MAKE_THREADS \
+    && make install \
+    && ldconfig \
+    && rm -rf /workspace/tmp/*
+
+# Install intel-vaapi-driver
+RUN cd /workspace/tmp/ \
+    && wget -O intel-vaapi-driver-1.6-branch.zip \
+    https://codeload.github.com/intel/intel-vaapi-driver/zip/refs/heads/v1.6-branch \
+    && ls \
+    && unzip intel-vaapi-driver-1.6-branch.zip \
+    && cd intel-vaapi-driver-1.6-branch \
+    && ./autogen.sh \
+    && ./configure \
+    && make -j$MAKE_THREADS \
+    && make install \
+    && ldconfig \
+    && rm -rf /workspace/tmp/*
+
+# Install libva-utils
+RUN cd /workspace/tmp/ \
+    && wget -O libva-utils-2.4.0.zip \
+    https://codeload.github.com/intel/libva-utils/zip/refs/tags/2.4.0 \
+    && ls \
+    && unzip libva-utils-2.4.0.zip \
+    && cd libva-utils-2.4.0 \
+    && ./autogen.sh \
+    && ./configure \
+    && make -j$MAKE_THREADS \
+    && make install \
+    && ldconfig \
+    && rm -rf /workspace/tmp/*
+
+# Install ffmpeg
+RUN cd /workspace/tmp/ \
+    && wget -O ffmpeg-4.1.tar.bz2 \
+    https://ffmpeg.org/releases/ffmpeg-4.1.tar.bz2 \
+    && ls \
+    && tar xvf ffmpeg-4.1.tar.bz2 \
+    && cd ffmpeg-4.1/ \
+		&& ./configure \
+    --enable-shared \
+    --enable-gpl \
+    --enable-libx264 \
+    --enable-libx265 \
+    --enable-vaapi \
+    && make -j$MAKE_THREADS \
+    && make install \
+    && ldconfig
+    && rm -rf /workspace/tmp/*
+
 # Install OpenCV for C and C++
 RUN cd /workspace/tmp/ \
-    && wget -O opencv-4.5.2.zip \
-    https://codeload.github.com/opencv/opencv/zip/4.5.2 \
+    && wget -O opencv-3.4.zip \
+    https://codeload.github.com/opencv/opencv/zip/3.4 \
     && ls \
-    && unzip opencv-4.5.2.zip \
-    && wget -O opencv_contrib-4.5.2.zip \
-    https://codeload.github.com/opencv/opencv_contrib/zip/4.5.2 \
+    && unzip opencv-3.4.zip \
+    && wget -O opencv_contrib-3.4.zip \
+    https://codeload.github.com/opencv/opencv_contrib/zip/refs/heads/3.4 \
     && ls \
-    && unzip opencv_contrib-4.5.2.zip \
-    && cd opencv-4.5.2 \
+    && unzip opencv_contrib-3.4.zip \
+    && cd opencv-3.4 \
     && mkdir -p build \
     && cd build \
     && cmake .. \
-    -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.5.4/modules \
+    -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4/modules \
     -DCMAKE_BUILD_TYPE=release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
     -DBUILD_PROTOBUF=OFF \
