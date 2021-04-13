@@ -3,8 +3,6 @@ FROM ubuntu:18.04
 MAINTAINER hao jiang (hao.jiang@corerain.com)
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS yes
-ENV TERM xterm-256color
-ARG USER_NAME=corerain
 ARG MAKE_THREADS=4
 
 RUN apt-get update -y \
@@ -63,23 +61,19 @@ RUN apt-get update -y \
            /var/tmp/* \
            /usr/share/doc/*
 
-RUN useradd -ms /bin/bash ${USER_NAME} \
-    && echo "${USER_NAME}:admin" | chpasswd \
-    && adduser ${USER_NAME} sudo
-USER ${USER_NAME}
-RUN mkdir -p ~/tmp/
+RUN mkdir -p /workspace/tmp
 
 # Install cmake
-RUN cd ~/tmp/ \
+RUN cd /workspace/tmp/ \
     && wget -O cmake-3.14.7-Linux-x86_64.tar.gz \
     https://cmake.org/files/v3.14/cmake-3.14.7-Linux-x86_64.tar.gz \
     && tar xzf cmake-3.14.7-Linux-x86_64.tar.gz \
-    && echo admin | sudo -S mv cmake-3.14.7-Linux-x86_64 /opt/cmake-3.14.7 \
-    && echo admin | sudo -S ln -sf /opt/cmake-3.14.7/bin/* /usr/bin/ \
-    && rm -rf ~/tmp/*
+    && mv cmake-3.14.7-Linux-x86_64 /opt/cmake-3.14.7 \
+    && ln -sf /opt/cmake-3.14.7/bin/* /usr/bin/ \
+    && rm -rf /workspace/tmp/*
 
 # Install OpenCV for C and C++
-RUN cd ~/tmp/ \
+RUN cd /workspace/tmp/ \
     && wget -O opencv-4.5.2.zip \
     https://codeload.github.com/opencv/opencv/zip/4.5.2 \
     && ls \
@@ -104,12 +98,12 @@ RUN cd ~/tmp/ \
     -DWITH_OPENCLAMDBLAS=OFF \
     -DWITH_OPENCLAMDFFT=OFF \
     && make -j$MAKE_THREADS \
-    && echo admin | sudo -S make install \
-    && echo admin | sudo -S ldconfig \
-    && rm -rf ~/tmp/*
+    && make install \
+    && ldconfig \
+    && rm -rf /workspace/tmp/*
 
 # Install gtest
-RUN cd ~/tmp/ \
+RUN cd /workspace/tmp/ \
     && wget -O googletest-release-1.8.0.zip \
     https://codeload.github.com/google/googletest/zip/release-1.8.0 \
     && ls \
@@ -124,12 +118,12 @@ RUN cd ~/tmp/ \
     -DBUILD_SHARED_LIBS=true \
     -DBUILD_STATIC_LIBS=true \
     && make -j$MAKE_THREADS \
-    && echo admin | sudo -S make install \
-    && echo admin | sudo -S ldconfig \
-    && rm -rf ~/tmp/*
+    && make install \
+    && ldconfig \
+    && rm -rf /workspace/tmp/*
 
 # Install gflags
-RUN cd ~/tmp/ \
+RUN cd /workspace/tmp/ \
     && wget -O gflags-2.2.2.zip \
     https://codeload.github.com/gflags/gflags/zip/v2.2.2 \
     && ls \
@@ -143,12 +137,12 @@ RUN cd ~/tmp/ \
     -DBUILD_SHARED_LIBS=true \
     -DBUILD_STATIC_LIBS=true \
     && make -j$MAKE_THREADS \
-    && echo admin | sudo -S make install \
-    && echo admin | sudo -S ldconfig \
-    && rm -rf ~/tmp/*
+    && make install \
+    && ldconfig \
+    && rm -rf /workspace/tmp/*
 
 # Install glog
-RUN cd ~/tmp/ \
+RUN cd /workspace/tmp/ \
     && wget -O glog-0.3.4.zip \
     https://codeload.github.com/google/glog/zip/v0.3.4 \
     && ls \
@@ -156,17 +150,14 @@ RUN cd ~/tmp/ \
     && cd glog-0.3.4 \
     && ./configure \
     && make -j$MAKE_THREADS \
-    && echo admin | sudo -S make install \
-    && echo admin | sudo -S ldconfig \
-    && rm -rf ~/tmp/*
+    && make install \
+    && ldconfig \
+    && rm -rf /workspace/tmp/*
 
 # Change download sources
 RUN cp /etc/apt/sources.list /etc/apt/sources.list.bk \
     && sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
 
-USER ${USER_NAME}
-
-WORKDIR /home/${USER_NAME}
 # Finished
 # To build an image:
 # docker build -t <image_name>:<image_tag> -f <Dockerfile_name> .
