@@ -148,7 +148,7 @@ RUN cd /workspace/tmp/ \
     && ls \
     && tar xvf ffmpeg-4.1.tar.bz2 \
     && cd ffmpeg-4.1/ \
-		&& ./configure \
+    && ./configure \
     --enable-shared \
     --enable-gpl \
     --enable-libx264 \
