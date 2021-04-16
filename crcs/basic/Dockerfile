@@ -58,6 +58,7 @@ RUN apt-get update -y \
     libasound2-dev \
     libx264-dev \
     libx265-dev \
+    libevent-dev \
     mesa-common-dev \
     mercurial \
     net-tools \
