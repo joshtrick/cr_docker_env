@@ -144,11 +144,11 @@ RUN cd /workspace/tmp/ \
 
 # Install ffmpeg
 RUN cd /workspace/tmp/ \
-    && wget -O ffmpeg-4.1.tar.bz2 \
-    https://ffmpeg.org/releases/ffmpeg-4.1.tar.bz2 \
+    && wget -O ffmpeg-4.3.2.tar.bz2 \
+    https://ffmpeg.org/releases/ffmpeg-4.3.2.tar.bz2 \
     && ls \
-    && tar xvf ffmpeg-4.1.tar.bz2 \
-    && cd ffmpeg-4.1/ \
+    && tar xvf ffmpeg-4.3.2.tar.bz2 \
+    && cd ffmpeg-4.3.2/ \
     && ./configure \
     --enable-shared \
     --enable-gpl \
