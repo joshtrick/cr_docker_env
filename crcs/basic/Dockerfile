@@ -59,6 +59,7 @@ RUN apt-get update -y \
     libx264-dev \
     libx265-dev \
     libevent-dev \
+    libcurl4-openssl-dev \
     mesa-common-dev \
     mercurial \
     net-tools \
@@ -185,6 +186,20 @@ RUN cd /workspace/tmp/ \
     -DWITH_OPENCL=OFF \
     -DWITH_OPENCLAMDBLAS=OFF \
     -DWITH_OPENCLAMDFFT=OFF \
+    && make -j$MAKE_THREADS \
+    && make install \
+    && ldconfig \
+    && rm -rf /workspace/tmp/*
+
+# Install protobuf
+RUN cd /workspace/tmp/ \
+    && wget -O protobuf-3.5.1.1.zip \
+    https://codeload.github.com/protocolbuffers/protobuf/zip/3.5.1.1 \
+    && ls \
+    && unzip protobuf-3.5.1.1.zip \
+    && cd protobuf-3.5.1.1 \
+    && ./autogen.sh \
+    && ./configure \
     && make -j$MAKE_THREADS \
     && make install \
     && ldconfig \
