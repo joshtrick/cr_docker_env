@@ -94,20 +94,20 @@ RUN mkdir -p /workspace/tmp
 
 # Install cmake
 RUN cd /workspace/tmp/ \
-    && wget -O cmake-3.14.7-Linux-x86_64.tar.gz \
+    && wget -O cmake.tar.gz \
     https://cmake.org/files/v3.14/cmake-3.14.7-Linux-x86_64.tar.gz \
-    && tar xzf cmake-3.14.7-Linux-x86_64.tar.gz \
+    && tar xzf cmake.tar.gz \
     && mv cmake-3.14.7-Linux-x86_64 /opt/cmake-3.14.7 \
     && ln -sf /opt/cmake-3.14.7/bin/* /usr/bin/ \
     && rm -rf /workspace/tmp/*
 
 # Install libva
 RUN cd /workspace/tmp/ \
-    && wget -O libva-2.4-branch.zip \
-    https://codeload.github.com/intel/libva/zip/refs/heads/v2.4-branch \
+    && wget -O libva.zip \
+    https://codeload.github.com/intel/libva/zip/refs/tags/2.11.0 \
     && ls \
-    && unzip libva-2.4-branch.zip \
-    && cd libva-2.4-branch \
+    && unzip libva.zip \
+    && cd libva-2.11.0 \
     && ./autogen.sh \
     && ./configure \
     && make -j$MAKE_THREADS \
@@ -117,11 +117,11 @@ RUN cd /workspace/tmp/ \
 
 # Install intel-vaapi-driver
 RUN cd /workspace/tmp/ \
-    && wget -O intel-vaapi-driver-1.6-branch.zip \
-    https://codeload.github.com/intel/intel-vaapi-driver/zip/refs/heads/v1.6-branch \
+    && wget -O intel-vaapi-driver.zip \
+    https://codeload.github.com/intel/intel-vaapi-driver/zip/refs/tags/2.4.1 \
     && ls \
-    && unzip intel-vaapi-driver-1.6-branch.zip \
-    && cd intel-vaapi-driver-1.6-branch \
+    && unzip intel-vaapi-driver.zip \
+    && cd intel-vaapi-driver-2.4.1 \
     && ./autogen.sh \
     && ./configure \
     && make -j$MAKE_THREADS \
@@ -131,11 +131,11 @@ RUN cd /workspace/tmp/ \
 
 # Install libva-utils
 RUN cd /workspace/tmp/ \
-    && wget -O libva-utils-2.4.0.zip \
-    https://codeload.github.com/intel/libva-utils/zip/refs/tags/2.4.0 \
+    && wget -O libva-utils.zip \
+    https://codeload.github.com/intel/libva-utils/zip/refs/tags/2.11.1 \
     && ls \
-    && unzip libva-utils-2.4.0.zip \
-    && cd libva-utils-2.4.0 \
+    && unzip libva-utils.zip \
+    && cd libva-utils-2.11.1 \
     && ./autogen.sh \
     && ./configure \
     && make -j$MAKE_THREADS \
@@ -145,11 +145,11 @@ RUN cd /workspace/tmp/ \
 
 # Install ffmpeg
 RUN cd /workspace/tmp/ \
-    && wget -O ffmpeg-4.3.2.tar.bz2 \
-    https://ffmpeg.org/releases/ffmpeg-4.3.2.tar.bz2 \
+    && wget -O ffmpeg.tar.bz2 \
+    https://ffmpeg.org/releases/ffmpeg-4.4.tar.bz2 \
     && ls \
-    && tar xvf ffmpeg-4.3.2.tar.bz2 \
-    && cd ffmpeg-4.3.2/ \
+    && tar xvf ffmpeg.tar.bz2 \
+    && cd ffmpeg-4.4/ \
     && ./configure \
     --enable-shared \
     --enable-gpl \
@@ -163,14 +163,14 @@ RUN cd /workspace/tmp/ \
 
 # Install OpenCV for C and C++
 RUN cd /workspace/tmp/ \
-    && wget -O opencv-3.4.zip \
+    && wget -O opencv.zip \
     https://codeload.github.com/opencv/opencv/zip/3.4 \
     && ls \
-    && unzip opencv-3.4.zip \
-    && wget -O opencv_contrib-3.4.zip \
+    && unzip opencv.zip \
+    && wget -O opencv_contrib.zip \
     https://codeload.github.com/opencv/opencv_contrib/zip/refs/heads/3.4 \
     && ls \
-    && unzip opencv_contrib-3.4.zip \
+    && unzip opencv_contrib.zip \
     && cd opencv-3.4 \
     && mkdir -p build \
     && cd build \
@@ -193,10 +193,10 @@ RUN cd /workspace/tmp/ \
 
 # Install protobuf
 RUN cd /workspace/tmp/ \
-    && wget -O protobuf-3.5.1.1.zip \
+    && wget -O protobuf.zip \
     https://codeload.github.com/protocolbuffers/protobuf/zip/3.5.1.1 \
     && ls \
-    && unzip protobuf-3.5.1.1.zip \
+    && unzip protobuf.zip \
     && cd protobuf-3.5.1.1 \
     && ./autogen.sh \
     && ./configure \
@@ -207,10 +207,10 @@ RUN cd /workspace/tmp/ \
 
 # Install gtest
 RUN cd /workspace/tmp/ \
-    && wget -O googletest-release-1.8.0.zip \
+    && wget -O googletest-release.zip \
     https://codeload.github.com/google/googletest/zip/release-1.8.0 \
     && ls \
-    && unzip googletest-release-1.8.0.zip \
+    && unzip googletest-release.zip \
     && cd googletest-release-1.8.0 \
     && mkdir -p build \
     && cd build \
@@ -227,10 +227,10 @@ RUN cd /workspace/tmp/ \
 
 # Install gflags
 RUN cd /workspace/tmp/ \
-    && wget -O gflags-2.2.2.zip \
+    && wget -O gflags.zip \
     https://codeload.github.com/gflags/gflags/zip/v2.2.2 \
     && ls \
-    && unzip gflags-2.2.2.zip \
+    && unzip gflags.zip \
     && cd gflags-2.2.2 \
     && mkdir -p build \
     && cd build \
@@ -246,10 +246,10 @@ RUN cd /workspace/tmp/ \
 
 # Install glog
 RUN cd /workspace/tmp/ \
-    && wget -O glog-0.3.4.zip \
+    && wget -O glog.zip \
     https://codeload.github.com/google/glog/zip/v0.3.4 \
     && ls \
-    && unzip glog-0.3.4.zip \
+    && unzip glog.zip \
     && cd glog-0.3.4 \
     && ./configure \
     && make -j$MAKE_THREADS \
