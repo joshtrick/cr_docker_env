@@ -97,17 +97,17 @@ RUN cd /workspace/tmp/ \
     && wget -O cmake.tar.gz \
     https://cmake.org/files/v3.14/cmake-3.14.7-Linux-x86_64.tar.gz \
     && tar xzf cmake.tar.gz \
-    && mv cmake-3.14.7-Linux-x86_64 /opt/cmake-3.14.7 \
-    && ln -sf /opt/cmake-3.14.7/bin/* /usr/bin/ \
+    && mv cmake-* /opt/cmake \
+    && ln -sf /opt/cmake/bin/* /usr/bin/ \
     && rm -rf /workspace/tmp/*
 
 # Install libva
 RUN cd /workspace/tmp/ \
     && wget -O libva.zip \
     https://codeload.github.com/intel/libva/zip/refs/tags/2.11.0 \
-    && ls \
     && unzip libva.zip \
-    && cd libva-2.11.0 \
+    && mv libva-* libva \
+    && cd libva \
     && ./autogen.sh \
     && ./configure \
     && make -j$MAKE_THREADS \
@@ -119,9 +119,9 @@ RUN cd /workspace/tmp/ \
 RUN cd /workspace/tmp/ \
     && wget -O intel-vaapi-driver.zip \
     https://codeload.github.com/intel/intel-vaapi-driver/zip/refs/tags/2.4.1 \
-    && ls \
     && unzip intel-vaapi-driver.zip \
-    && cd intel-vaapi-driver-2.4.1 \
+    && mv intel-vaapi-driver-* intel-vaapi-driver \
+    && cd intel-vaapi-driver \
     && ./autogen.sh \
     && ./configure \
     && make -j$MAKE_THREADS \
@@ -133,9 +133,9 @@ RUN cd /workspace/tmp/ \
 RUN cd /workspace/tmp/ \
     && wget -O libva-utils.zip \
     https://codeload.github.com/intel/libva-utils/zip/refs/tags/2.11.1 \
-    && ls \
     && unzip libva-utils.zip \
-    && cd libva-utils-2.11.1 \
+    && mv libva-utils-* libva-utils \
+    && cd libva-utils \
     && ./autogen.sh \
     && ./configure \
     && make -j$MAKE_THREADS \
@@ -147,9 +147,9 @@ RUN cd /workspace/tmp/ \
 RUN cd /workspace/tmp/ \
     && wget -O ffmpeg.tar.bz2 \
     https://ffmpeg.org/releases/ffmpeg-4.4.tar.bz2 \
-    && ls \
     && tar xvf ffmpeg.tar.bz2 \
-    && cd ffmpeg-4.4/ \
+    && mv ffmpeg-* ffmpeg \
+    && cd ffmpeg \
     && ./configure \
     --enable-shared \
     --enable-gpl \
@@ -165,17 +165,17 @@ RUN cd /workspace/tmp/ \
 RUN cd /workspace/tmp/ \
     && wget -O opencv.zip \
     https://codeload.github.com/opencv/opencv/zip/3.4 \
-    && ls \
-    && unzip opencv.zip \
     && wget -O opencv_contrib.zip \
     https://codeload.github.com/opencv/opencv_contrib/zip/refs/heads/3.4 \
-    && ls \
+    && unzip opencv.zip \
     && unzip opencv_contrib.zip \
-    && cd opencv-3.4 \
+    && mv opencv-* opencv \
+    && mv opencv_contrib-* opencv_contrib \
+    && cd opencv \
     && mkdir -p build \
     && cd build \
     && cmake .. \
-    -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4/modules \
+    -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
     -DCMAKE_BUILD_TYPE=release \
     -DCMAKE_INSTALL_PREFIX=/usr/local/ \
     -DBUILD_PROTOBUF=OFF \
@@ -195,9 +195,9 @@ RUN cd /workspace/tmp/ \
 RUN cd /workspace/tmp/ \
     && wget -O protobuf.zip \
     https://codeload.github.com/protocolbuffers/protobuf/zip/3.5.1.1 \
-    && ls \
     && unzip protobuf.zip \
-    && cd protobuf-3.5.1.1 \
+    && mv protobuf-* protobuf \
+    && cd protobuf \
     && ./autogen.sh \
     && ./configure \
     && make -j$MAKE_THREADS \
@@ -207,11 +207,11 @@ RUN cd /workspace/tmp/ \
 
 # Install gtest
 RUN cd /workspace/tmp/ \
-    && wget -O googletest-release.zip \
+    && wget -O googletest.zip \
     https://codeload.github.com/google/googletest/zip/release-1.8.0 \
-    && ls \
-    && unzip googletest-release.zip \
-    && cd googletest-release-1.8.0 \
+    && unzip googletest.zip \
+    && mv googletest-* googletest \
+    && cd googletest \
     && mkdir -p build \
     && cd build \
     && cmake .. \
@@ -229,9 +229,9 @@ RUN cd /workspace/tmp/ \
 RUN cd /workspace/tmp/ \
     && wget -O gflags.zip \
     https://codeload.github.com/gflags/gflags/zip/v2.2.2 \
-    && ls \
     && unzip gflags.zip \
-    && cd gflags-2.2.2 \
+    && mv gflags-* gflags \
+    && cd gflags \
     && mkdir -p build \
     && cd build \
     && cmake .. \
@@ -248,9 +248,9 @@ RUN cd /workspace/tmp/ \
 RUN cd /workspace/tmp/ \
     && wget -O glog.zip \
     https://codeload.github.com/google/glog/zip/v0.3.4 \
-    && ls \
     && unzip glog.zip \
-    && cd glog-0.3.4 \
+    && mv glog-* glog \
+    && cd glog \
     && ./configure \
     && make -j$MAKE_THREADS \
     && make install \
