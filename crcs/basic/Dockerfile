@@ -3,7 +3,7 @@ FROM ubuntu:18.04
 MAINTAINER hao jiang (hao.jiang@corerain.com)
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS yes
-ARG MAKE_THREADS=4
+ARG MAKE_THREADS=8
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
